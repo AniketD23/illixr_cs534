@@ -1,4 +1,4 @@
-# !/bin/bash
+#!/bin/bash
 # this goes in the illixr build folder
 
 if [[ -z "$ILLIXR_HOME" ]]; then
@@ -8,16 +8,20 @@ fi
 
 ${ILLIXR_HOME}/build/bin_cmake/cmake-3.31.11-linux-x86_64/bin/cmake .. \
   -DCMAKE_VERBOSE_MAKEFILE=ON \
-  -DCMAKE_INSTALL_PREFIX=/shared/workspace/akdas3/cs534 \
+  -DCMAKE_INSTALL_PREFIX=/shared/workspace/ntasnim/cs534/illixr_cs534 \
   -DBUILD_SHARED_LIBS=ON \
   -DCUDA_TOOLKIT_ROOT_DIR=$(dirname $(dirname $(which nvcc))) \
   -DCMAKE_CUDA_COMPILER=$(which nvcc) \
-  -DCMAKE_C_FLAGS="-I${ILLIXR_HOME}/build/local_deps" \
-  -DCMAKE_CXX_FLAGS="-I${ILLIXR_HOME}/build/local_deps" \
+  -DCUDA_COMPAT_GCC=/software/gcc-11.2.0-rh8/bin/g++ \
+  -DCMAKE_C_FLAGS="-I${ILLIXR_HOME}/build/local_deps -I/software/cuda-11.6/include" \
+  -DCMAKE_CXX_FLAGS="-I${ILLIXR_HOME}/build/local_deps -I/software/cuda-11.6/include" \
+  -DCMAKE_CUDA_FLAGS="--expt-relaxed-constexpr -Xcompiler=-fpermissive" \
+  -DCMAKE_EXE_LINKER_FLAGS="-L${ILLIXR_HOME}/build/local_deps/omp_shim -Wl,-rpath,/software/gcc-11.2.0-rh8/lib64" \
+  -DCMAKE_SHARED_LINKER_FLAGS="-L${ILLIXR_HOME}/build/local_deps/omp_shim -Wl,-rpath,/software/gcc-11.2.0-rh8/lib64" \
   -DOpenMP_C_FLAGS="-fopenmp" \
   -DOpenMP_C_LIB_NAMES="gomp" \
-  -DOpenMP_gomp_LIBRARY=/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so \
-  -DOpenMP_CXX_LIBRARY=/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so \
+  -DOpenMP_gomp_LIBRARY=/software/gcc-11.2.0-rh8/lib64/libgomp.so \
+  -DOpenMP_CXX_LIBRARY=/software/gcc-11.2.0-rh8/lib64/libgomp.so \
   -DOpenMP_CXX_FLAGS="-fopenmp" \
   -DOpenMP_CXX_LIB_NAMES="gomp" \
   -DUSE_ADA.OFFLINE_SCANNET=ON \
@@ -31,5 +35,3 @@ ${ILLIXR_HOME}/build/bin_cmake/cmake-3.31.11-linux-x86_64/bin/cmake .. \
   -DUSE_ADA.MESH_DECOMPRESSION_GREY=ON \
   -DUSE_ADA.SCENE_MANAGEMENT=ON \
   -DCMAKE_BUILD_TYPE=Release
-
-  # -DCMAKE_PREFIX_PATH="" .. \

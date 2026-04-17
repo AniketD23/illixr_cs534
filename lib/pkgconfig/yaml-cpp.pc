@@ -1,0 +1,11 @@
+prefix=/shared/workspace/ntasnim/cs534/illixr_cs534
+exec_prefix=${prefix}
+includedir=/shared/workspace/ntasnim/cs534/illixr_cs534/include
+libdir=/shared/workspace/ntasnim/cs534/illixr_cs534/lib
+
+Name: Yaml-cpp
+Description: A YAML parser and emitter for C++
+Version: 0.8.0
+Requires:
+Libs: -L${libdir} -lyaml-cpp
+Cflags: -I${includedir}
