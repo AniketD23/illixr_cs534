@@ -11,7 +11,8 @@
 #else
     #include "../proto/input_stub.hpp"
 #endif
-#include "video_decoder.hpp"
+// aniket: video_decoder only used for jetson depth encoding
+// #include "video_decoder.hpp"
 
 #include <filesystem>
 
@@ -54,7 +55,7 @@ private:
     std::ofstream     receive_timestamp;
     std::ofstream     receive_size;
 
-    std::unique_ptr<ada_video_decoder> decoder_;
+    // std::unique_ptr<ada_video_decoder> decoder_;
     cv::Mat                            img0_dst_;
     cv::Mat                            img1_dst_;
 

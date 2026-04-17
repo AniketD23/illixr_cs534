@@ -113,89 +113,91 @@ void server_rx::_p_one_iteration() {
 }
 
 void server_rx::start() {
-    decoder_ = std::make_unique<ada_video_decoder>([this](cv::Mat&& img0, cv::Mat&& img1) {
-        {
-            std::lock_guard<std::mutex> lock{mutex_};
-            img0_dst_  = std::move(img0);
-            img1_dst_  = std::move(img1);
-            img_ready_ = true;
-        }
-        cond_var_.notify_one();
-    });
-    decoder_->init();
+    // decoder_ = std::make_unique<ada_video_decoder>([this](cv::Mat&& img0, cv::Mat&& img1) {
+    //     {
+    //         std::lock_guard<std::mutex> lock{mutex_};
+    //         img0_dst_  = std::move(img0);
+    //         img1_dst_  = std::move(img1);
+    //         img_ready_ = true;
+    //     }
+    //     cond_var_.notify_one();
+    // });
+    // decoder_->init();
     threadloop::start();
 }
 
+// aniket: server only handles sr_input for jetson depth encoding
 void server_rx::receive_sr_input(const sr_input_proto::SRSendData& sr_input) {
-#ifndef NDEBUG
-    spdlog::get("illixr")->debug("Received SR input frame {}/{}", current_frame_no_, frame_count_ - 1);
-#endif
-    auto start = std::chrono::high_resolution_clock::now();
-    if (cur_frame % fps_ == 0 && cur_frame > 0) {
-        auto since_epoch = start.time_since_epoch();
-        auto millis      = std::chrono::duration_cast<std::chrono::milliseconds>(since_epoch).count();
-        receive_timestamp << cur_frame << " " << millis << "\n";
-    }
-    Eigen::Vector3f    incoming_position{static_cast<float>(sr_input.input_pose().p_x()),
-                                      static_cast<float>(sr_input.input_pose().p_y()),
-                                      static_cast<float>(sr_input.input_pose().p_z())};
-    Eigen::Quaternionf incoming_orientation{
-        static_cast<float>(sr_input.input_pose().o_w()), static_cast<float>(sr_input.input_pose().o_x()),
-        static_cast<float>(sr_input.input_pose().o_y()), static_cast<float>(sr_input.input_pose().o_z())};
+// #ifndef NDEBUG
+//     spdlog::get("illixr")->debug("Received SR input frame {}/{}", current_frame_no_, frame_count_ - 1);
+// #endif
+//     auto start = std::chrono::high_resolution_clock::now();
+//     if (cur_frame % fps_ == 0 && cur_frame > 0) {
+//         auto since_epoch = start.time_since_epoch();
+//         auto millis      = std::chrono::duration_cast<std::chrono::milliseconds>(since_epoch).count();
+//         receive_timestamp << cur_frame << " " << millis << "\n";
+//     }
+//     Eigen::Vector3f    incoming_position{static_cast<float>(sr_input.input_pose().p_x()),
+//                                       static_cast<float>(sr_input.input_pose().p_y()),
+//                                       static_cast<float>(sr_input.input_pose().p_z())};
+//     Eigen::Quaternionf incoming_orientation{
+//         static_cast<float>(sr_input.input_pose().o_w()), static_cast<float>(sr_input.input_pose().o_x()),
+//         static_cast<float>(sr_input.input_pose().o_y()), static_cast<float>(sr_input.input_pose().o_z())};
 
-    pose_type pose = {time_point{}, incoming_position, incoming_orientation};
+//     pose_type pose = {time_point{}, incoming_position, incoming_orientation};
 
-    // Must do a deep copy of the received data (in the form of a string of bytes)
-    auto msb = const_cast<std::string&>(sr_input.depth_img_msb_data().img_data());
-    auto lsb = const_cast<std::string&>(sr_input.depth_img_lsb_data().img_data());
+//     // Must do a deep copy of the received data (in the form of a string of bytes)
+//     auto msb = const_cast<std::string&>(sr_input.depth_img_msb_data().img_data());
+//     auto lsb = const_cast<std::string&>(sr_input.depth_img_lsb_data().img_data());
 
-    receive_size << "MSB " << cur_frame << " " << sr_input.depth_img_msb_data().size() << "\n";
-    receive_size << "LSB " << cur_frame << " " << sr_input.depth_img_lsb_data().size() << "\n";
+//     receive_size << "MSB " << cur_frame << " " << sr_input.depth_img_msb_data().size() << "\n";
+//     receive_size << "LSB " << cur_frame << " " << sr_input.depth_img_lsb_data().size() << "\n";
 
-    auto                         depth_decoding_start = std::chrono::high_resolution_clock::now();
-    std::unique_lock<std::mutex> lock{mutex_};
-    decoder_->enqueue(msb, lsb);
-    cond_var_.wait(lock, [this]() {
-        return img_ready_;
-    });
+//     auto                         depth_decoding_start = std::chrono::high_resolution_clock::now();
+//     // std::unique_lock<std::mutex> lock{mutex_};
+//     // decoder_->enqueue(msb, lsb);
+//     // cond_var_.wait(lock, [this]() {
+//     //     return img_ready_;
+//     // });
 
-    img0_dst_.copyTo(msb_buf_);
-    img1_dst_.copyTo(lsb_buf_);
-    img_ready_ = false;
-    lock.unlock();
+//     // img0_dst_.copyTo(msb_buf_);
+//     // img1_dst_.copyTo(lsb_buf_);
+//     // img_ready_ = false;
+//     // lock.unlock();
 
-    auto depth_decoding_end = std::chrono::high_resolution_clock::now();
-    auto duration_depth_decoding =
-        std::chrono::duration_cast<std::chrono::microseconds>(depth_decoding_end - depth_decoding_start).count();
-    double duration_depth_decoding_ms = static_cast<double>(duration_depth_decoding) / 1000.0;
-    // printf("DepthDecode %.3f\n", duration_depth_decoding_ms);
-    receive_time << "DepthDecode " << cur_frame << " " << duration_depth_decoding_ms << "\n";
+//     auto depth_decoding_end = std::chrono::high_resolution_clock::now();
+//     auto duration_depth_decoding =
+//         std::chrono::duration_cast<std::chrono::microseconds>(depth_decoding_end - depth_decoding_start).count();
+//     double duration_depth_decoding_ms = static_cast<double>(duration_depth_decoding) / 1000.0;
+//     // printf("DepthDecode %.3f\n", duration_depth_decoding_ms);
+//     receive_time << "DepthDecode " << cur_frame << " " << duration_depth_decoding_ms << "\n";
 
-    auto combine_start = std::chrono::high_resolution_clock::now();
+//     auto combine_start = std::chrono::high_resolution_clock::now();
 
-    msb_buf_.convertTo(hi16_, CV_16U, 256.0);
-    lsb_buf_.convertTo(lo16_, CV_16U);
+//     msb_buf_.convertTo(hi16_, CV_16U, 256.0);
+//     lsb_buf_.convertTo(lo16_, CV_16U);
 
-    cv::bitwise_or(hi16_, lo16_, depth16_);
-    auto   combine_end         = std::chrono::high_resolution_clock::now();
-    auto   duration_combine    = std::chrono::duration_cast<std::chrono::microseconds>(combine_end - combine_start).count();
-    double duration_combine_ms = static_cast<double>(duration_combine) / 1000.0;
-    receive_time << "Combine " << cur_frame << " " << duration_combine_ms << "\n";
+//     cv::bitwise_or(hi16_, lo16_, depth16_);
+//     auto   combine_end         = std::chrono::high_resolution_clock::now();
+//     auto   duration_combine    = std::chrono::duration_cast<std::chrono::microseconds>(combine_end - combine_start).count();
+//     double duration_combine_ms = static_cast<double>(duration_combine) / 1000.0;
+//     receive_time << "Combine " << cur_frame << " " << duration_combine_ms << "\n";
 
-    cv::Mat rgb; // pyh dummy here
-    scannet_.put(scannet_.allocate<scene_recon_type>(scene_recon_type{time_point{}, pose, depth16_.clone(), rgb, false}));
+//     cv::Mat rgb; // pyh dummy here
+//     // aniket: video_decoder only used for jetson depth encoding
+//     // scannet_.put(scannet_.allocate<scene_recon_type>(scene_recon_type{time_point{}, pose, depth16_.clone(), rgb, false}));
 
-    auto end         = std::chrono::high_resolution_clock::now();
-    auto duration    = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-    auto duration_ms = static_cast<double>(duration) / 1000.0;
-    receive_time << "Full " << cur_frame << " " << duration_ms << "\n";
-    cur_frame++;
-    if (cur_frame == frame_count_) {
-        receive_time.flush();
-        receive_size.flush();
-        receive_timestamp.flush();
-    }
-    current_frame_no_++;
+//     auto end         = std::chrono::high_resolution_clock::now();
+//     auto duration    = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+//     auto duration_ms = static_cast<double>(duration) / 1000.0;
+//     receive_time << "Full " << cur_frame << " " << duration_ms << "\n";
+//     cur_frame++;
+//     if (cur_frame == frame_count_) {
+//         receive_time.flush();
+//         receive_size.flush();
+//         receive_timestamp.flush();
+//     }
+//     current_frame_no_++;
 }
 
 PLUGIN_MAIN(server_rx)

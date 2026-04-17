@@ -10,6 +10,8 @@ ${ILLIXR_HOME}/build/bin_cmake/cmake-3.31.11-linux-x86_64/bin/cmake .. \
   -DCMAKE_VERBOSE_MAKEFILE=ON \
   -DCMAKE_INSTALL_PREFIX=/shared/workspace/akdas3/cs534 \
   -DBUILD_SHARED_LIBS=ON \
+  -DCUDA_TOOLKIT_ROOT_DIR=$(dirname $(dirname $(which nvcc))) \
+  -DCMAKE_CUDA_COMPILER=$(which nvcc) \
   -DCMAKE_C_FLAGS="-I${ILLIXR_HOME}/build/local_deps" \
   -DCMAKE_CXX_FLAGS="-I${ILLIXR_HOME}/build/local_deps" \
   -DOpenMP_C_FLAGS="-fopenmp" \
@@ -31,4 +33,3 @@ ${ILLIXR_HOME}/build/bin_cmake/cmake-3.31.11-linux-x86_64/bin/cmake .. \
   -DCMAKE_BUILD_TYPE=Release
 
   # -DCMAKE_PREFIX_PATH="" .. \
-  # -DOpenMP_CXX_LIBRARY=/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so \  
