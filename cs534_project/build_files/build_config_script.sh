@@ -6,15 +6,19 @@ if [[ -z "$ILLIXR_HOME" ]]; then
   exit 1
 fi
 
-${ILLIXR_HOME}/build/bin_cmake/cmake-3.31.11-linux-x86_64/bin/cmake .. \
+cd ${ILLIXR_HOME}/build
+${ILLIXR_HOME}/cs534_project/build_files/bin_cmake/cmake-3.31.11-linux-x86_64/bin/cmake .. \
   -DCMAKE_VERBOSE_MAKEFILE=ON \
   -DCMAKE_INSTALL_PREFIX=/shared/workspace/akdas3/cs534 \
   -DBUILD_SHARED_LIBS=ON \
   -DCUDA_TOOLKIT_ROOT_DIR=$(dirname $(dirname $(which nvcc))) \
+  -DCUDAToolkit_ROOT=$(dirname $(dirname $(which nvcc))) \
+  -DCMAKE_C_COMPILER=clang-14 \
+  -DCMAKE_CXX_COMPILER=clang++-14 \
   -DCMAKE_CUDA_COMPILER=$(which nvcc) \
-  -DCMAKE_C_FLAGS="-I${ILLIXR_HOME}/build/local_deps" \
-  -DCMAKE_CXX_FLAGS="-I${ILLIXR_HOME}/build/local_deps" \
-  -DOpenMP_C_FLAGS="-fopenmp" \
+  -DWITH_CUDA=ON \
+  -DCMAKE_C_FLAGS="-I${ILLIXR_HOME}/cs534_project/build_files/local_deps -I/software/cuda-12.2/targets/x86_64-linux/include/" \
+  -DCMAKE_CXX_FLAGS="${CMAKE_C_FLAGS}" \  -DOpenMP_C_FLAGS="-fopenmp" \
   -DOpenMP_C_LIB_NAMES="gomp" \
   -DOpenMP_gomp_LIBRARY=/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so \
   -DOpenMP_CXX_LIBRARY=/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so \

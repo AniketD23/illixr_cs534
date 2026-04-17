@@ -17,7 +17,10 @@ data_record/
 build
 deps
 cmake-build*
-
+#cmake binary
+cs534_project/build_files/bin_cmake
+cs534_project/build_files/local_deps/opt
+cs534_project/build_files/local_deps/deepstream_sdk_v9.0.0_x86_64.tbz2
 illixr.yaml
 
 docs/docs/getting_started.md
