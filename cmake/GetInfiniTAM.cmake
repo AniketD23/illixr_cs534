@@ -1,6 +1,7 @@
 get_external_for_plugin(Draco)
 if (NOT Infinitam_FOUND)
     message(STATUS "Downloading InfiniTAM")
+    # aniket: get project infinitam repo instead
     FetchContent_Declare(InfiniTAM_ext
                         GIT_REPOSITORY https://github.com/AniketD23/infinitam_cs534.git
                         GIT_TAG main
