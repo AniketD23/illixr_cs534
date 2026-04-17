@@ -1,5 +1,6 @@
 Instructions for running:
 
+Change `DCMAKE_INSTALL_PREFIX` in `cs534_project/build/build_config_script.sh` to the directory containing this repo
 
 ```bash
 export ILLIXR_HOME=/path/to/illixr
