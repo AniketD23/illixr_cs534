@@ -1,14 +1,15 @@
 #!/bin/bash
-# this goes in the illixr build folder
 
 if [[ -z "$ILLIXR_HOME" ]]; then
   echo "Error: ILLIXR_HOME is not set"
   exit 1
 fi
 
+cd ${ILLIXR_HOME}/build 
+
 ${ILLIXR_HOME}/build/bin_cmake/cmake-3.31.11-linux-x86_64/bin/cmake .. \
   -DCMAKE_VERBOSE_MAKEFILE=ON \
-  -DCMAKE_INSTALL_PREFIX=/shared/workspace/ntasnim/cs534/illixr_cs534 \
+  -DCMAKE_INSTALL_PREFIX=${ILLIXR_HOME} \
   -DBUILD_SHARED_LIBS=ON \
   -DCUDA_TOOLKIT_ROOT_DIR=$(dirname $(dirname $(which nvcc))) \
   -DCMAKE_CUDA_COMPILER=$(which nvcc) \

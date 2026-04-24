@@ -1,0 +1,15 @@
+# This file was auto generated, take caution if manually editing.
+plugins: tcp_network_backend,ada.server_rx,ada.server_tx,ada.infinitam,ada.mesh_compression
+env_vars:
+  ENABLE_OFFLOAD: false
+  ENABLE_ALIGNMENT: false
+  ENABLE_VERBOSE_ERRORS: false
+  ENABLE_PRE_SLEEP: false
+  DURATION: 1200
+  THRESHOLD: FPS
+  FPS: 15
+  PARTIAL_MESH_COUNT: 8
+  MESH_COMPRESS_PARALLELISM: 8
+  ILLIXR_IS_CLIENT: 0
+  ILLIXR_DATA: /hdd0/akdas3/cs534-ic/project/scannet/scannet_0005
+  FRAME_COUNT: 1158

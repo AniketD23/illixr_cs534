@@ -2,7 +2,7 @@
 # source_env.sh — source this once per shell before building illixr_cs534.
 #
 # Usage:
-#     export ILLIXR_HOME=/shared/workspace/ntasnim/cs534/illixr_cs534
+#     export ILLIXR_HOME=/shared/workspace/{YOUR_NETID}/cs534/illixr_cs534
 #     source source_env.sh
 #
 # See BUILD_FIXES_README.md for the full story of why each of these is needed.
@@ -20,7 +20,7 @@
 
 if [[ -z "$ILLIXR_HOME" ]]; then
   echo "Error: set ILLIXR_HOME before sourcing this file."
-  echo "  export ILLIXR_HOME=/shared/workspace/ntasnim/cs534/illixr_cs534"
+  echo "  export ILLIXR_HOME=/shared/workspace/{YOUR_NETID}/cs534/illixr_cs534"
   return 1 2>/dev/null || exit 1
 fi
 

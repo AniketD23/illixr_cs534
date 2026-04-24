@@ -1,2 +1,3 @@
-server_fps_15
-server_fps_30
+fps_10
+fps_15
+fps_30
