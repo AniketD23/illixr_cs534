@@ -85,3 +85,7 @@ gdb --args ./main.opt.exe -y ${ILLIXR_HOME}$/cs534_project/configs/fps_15.yaml
 
 run
 ```
+
+# To run the script - (make sure to change the experiments.txt for alloc or fps)
+# the script run x.yaml where x is mentioned in experiments.txt
+bash /shared/workspace/ntasnim/cs534/illixr_cs534/cs534_project/configs/run_experiments.sh
