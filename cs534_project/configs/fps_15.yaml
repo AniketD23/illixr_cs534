@@ -1,8 +1,9 @@
 plugins: ada.offline_scannet,ada.infinitam,ada.mesh_compression,ada.mesh_decompression_grey,ada.scene_management
 env_vars:
   ILLIXR_RUN_DURATION: 2000
-  ILLIXR_DATA: /shared/workspace/ntasnim/cs534/illixr_cs534/scannet_test/scene0005
+  ILLIXR_DATA: ${ILLIXR_HOME}/scannet_test/scene0005
   FRAME_COUNT: 1158
+  THRESHOLD: FPS
   FPS: 15
   PARTIAL_MESH_COUNT: 8
   MESH_COMPRESS_PARALLELISM: 8

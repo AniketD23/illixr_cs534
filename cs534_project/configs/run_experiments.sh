@@ -1,9 +1,13 @@
 #!/bin/bash
 # Run ILLIXR Ada offline ScanNet experiments sequentially
 # Reads experiment names from experiments.txt and runs each corresponding YAML config
+if [[ -z "$ILLIXR_HOME" ]]; then
+  echo "Error: ILLIXR_HOME is not set"
+  exit 1
+fi
 
-CONFIG_DIR="/shared/workspace/ntasnim/cs534/illixr_cs534/cs534_project/configs"
-BUILD_DIR="/shared/workspace/ntasnim/cs534/illixr_cs534/build"
+CONFIG_DIR="${ILLIXR_HOME}/cs534_project/configs"
+BUILD_DIR="${ILLIXR_HOME}/build"
 EXPERIMENTS_FILE="${CONFIG_DIR}/experiments.txt"
 
 # How long to wait after last frame before killing (seconds)
@@ -11,9 +15,10 @@ POST_COMPLETION_WAIT=120
 
 # Environment setup
 export LD_PRELOAD=~/lib-override/libomp.so
-export LD_LIBRARY_PATH=~/lib-override:/shared/workspace/ntasnim/cs534/illixr_cs534/lib:/shared/workspace/ntasnim/cs534/illixr_cs534/build:/software/cuda-11.6/lib64:/software/cuda-11.6/extras/CUPTI/lib64
+export LD_LIBRARY_PATH=~/lib-override:${ILLIXR_HOME}/lib:${ILLIXR_HOME}/build:/software/cuda-11.6/lib64:/software/cuda-11.6/extras/CUPTI/lib64
 export OMP_NUM_THREADS=1
 export DISPLAY=:99
+export ILLIXR_LOG_LEVEL=warn
 
 # Start Xvfb if not already running
 if ! pgrep -x Xvfb > /dev/null; then
@@ -46,19 +51,19 @@ while IFS= read -r experiment; do
     PID=$!
 
     # Monitor: wait for completion, then give time for file write
-    while kill -0 $PID 2>/dev/null; do
-        if grep -q "Scene Management processed all frames\|sending last frame" "${experiment}_log.txt" 2>/dev/null; then
+    while kill -0 $PID; do
+        if grep -q "Scene Management processed all frames\|sending last frame" "${experiment}_log.txt"; then
             echo "Last frame sent, waiting ${POST_COMPLETION_WAIT}s for output file..."
             sleep $POST_COMPLETION_WAIT
-            kill $PID 2>/dev/null
+            kill $PID
             sleep 2
-            kill -9 $PID 2>/dev/null
+            kill -9 $PID
             break
         fi
         sleep 5
     done
 
-    wait $PID 2>/dev/null
+    wait $PID
 
     # Show log tail
     echo "--- Log tail ---"
@@ -66,7 +71,7 @@ while IFS= read -r experiment; do
     echo ""
 
     # Check for output and rename
-    newest_obj=$(ls -t *.obj 2>/dev/null | head -1)
+    newest_obj=$(ls -t *.obj | head -1)
     if [[ -n "$newest_obj" ]]; then
         echo "Output: $newest_obj ($(du -h "$newest_obj" | cut -f1))"
         mv "$newest_obj" "${experiment}_output.obj"
@@ -76,7 +81,7 @@ while IFS= read -r experiment; do
     fi
 
     # Cleanup any lingering processes
-    pkill -f "main.opt.exe" 2>/dev/null
+    pkill -f "main.opt.exe"
     sleep 3
 
     echo "Finished: ${experiment} at $(date)"
@@ -84,4 +89,4 @@ while IFS= read -r experiment; do
 done < "$EXPERIMENTS_FILE"
 
 echo "All experiments complete."
-ls -lh *_output.obj 2>/dev/null
+ls -lh *_output.obj
