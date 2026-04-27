@@ -85,6 +85,18 @@ gdb --args ./main.opt.exe -y ${ILLIXR_HOME}$/cs534_project/configs/fps_15.yaml
 
 run
 ```
+# To solve -stdlib=libstdc++ error
+sed -i 's/SET(CUDA_NVCC_FLAGS -Xcompiler -stdlib=libstdc++; -Xlinker -stdlib=libstdc++; ${CUDA_NVCC_FLAGS})/# Removed -stdlib=libstdc++ for GCC host compiler compatibility\n    SET(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS})/' /shared/workspace/ntasnim/cs534/illixr_cs534/build/_deps/infinitam_ext-src/cmake/UseCUDA.cmake
+
+sed -i 's/SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")/# Removed -stdlib=libstdc++ for GCC compatibility/' /shared/workspace/ntasnim/cs534/illixr_cs534/build/_deps/infinitam_ext-src/cmake/Flags.cmake
+sed -i 's/SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libstdc++")/# Removed -stdlib=libstdc++ for GCC compatibility/' /shared/workspace/ntasnim/cs534/illixr_cs534/build/_deps/infinitam_ext-src/cmake/Flags.cmake
+
+sed -i 's/-stdlib=libstdc++ //' /shared/workspace/ntasnim/cs534/illixr_cs534/build/_deps/infinitam_ext-src/CMakeLists.txt
+
+# verify
+grep -n "stdlib" /shared/workspace/ntasnim/cs534/illixr_cs534/build/_deps/infinitam_ext-src/cmake/UseCUDA.cmake
+grep -n "stdlib" /shared/workspace/ntasnim/cs534/illixr_cs534/build/_deps/infinitam_ext-src/cmake/Flags.cmake
+grep -n "stdlib" /shared/workspace/ntasnim/cs534/illixr_cs534/build/_deps/infinitam_ext-src/CMakeLists.txt
 
 # To run the script - (make sure to change the experiments.txt for alloc or fps)
 # the script run x.yaml where x is mentioned in experiments.txt
