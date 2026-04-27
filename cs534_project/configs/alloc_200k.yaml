@@ -10,5 +10,5 @@ env_vars:
   PARTIAL_MESH_COUNT: 8
   MESH_COMPRESS_PARALLELISM: 8
   FPS: 15
-  ILLIXR_DATA: ${ILLIXR_HOME}/scannet_test/scene0005
+  ILLIXR_DATA: /shared/workspace/ntasnim/cs534/illixr_cs534/scannet_test/scene0005
   FRAME_COUNT: 1158
