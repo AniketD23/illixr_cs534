@@ -48,20 +48,6 @@ while IFS= read -r experiment; do
     echo "Started at: $(date)"
     echo "=========================================="
 
-    # Backup existing log and data directories before run
-    if [[ -f "$LOGS_DIR/illixr.log" ]]; then
-        backup_timestamp=$(date +%s)
-        mv "$LOGS_DIR/illixr.log" "$LOGS_DIR/illixr_${backup_timestamp}.log"
-        echo "Backed up previous log to: illixr_${backup_timestamp}.log"
-    fi
-    
-    if [[ -d "$DATA_DIR" ]]; then
-        backup_timestamp=$(date +%s)
-        mv "$DATA_DIR" "${DATA_DIR}_${backup_timestamp}"
-        echo "Backed up previous data directory to: recorded_data_${backup_timestamp}"
-        mkdir -p "$DATA_DIR"
-    fi
-
 
     # Run in background, log to file
     rm -f ${ILLIXR_HOME}/build/logs/illixr.log
@@ -93,14 +79,16 @@ while IFS= read -r experiment; do
         mv "$LOGS_DIR/illixr.log" "$LOGS_DIR/illixr_${experiment}.log"
         echo "Saved log: illixr_${experiment}.log"
     fi
-    
+
     # Rename data directory from this run
     if [[ -d "$DATA_DIR" ]]; then
+        cp "${yaml_file}" "${DATA_DIR}"
+        rm -f "${DATA_DIR}_${experiment}"
         mv "$DATA_DIR" "${DATA_DIR}_${experiment}"
         echo "Saved data directory: recorded_data_${experiment}"
         mkdir -p "$DATA_DIR"
     fi
-    
+
     # Check for output and rename
     newest_obj=$(ls -t *.obj | head -1)
     if [[ -n "$newest_obj" ]]; then
@@ -121,14 +109,3 @@ done < "$EXPERIMENTS_FILE"
 
 echo "All experiments complete."
 ls -lh *_output.obj
-
-# Final cleanup: rename any remaining logs/data with timestamp
-  if [[ -f "$LOGS_DIR/illixr.log" ]]; then
-      final_timestamp=$(date +%s)
-      mv "$LOGS_DIR/illixr.log" "$LOGS_DIR/illixr_final_${final_timestamp}.log"
-  fi
-  
-  if [[ -d "$DATA_DIR" && $(ls -A "$DATA_DIR") ]]; then
-      final_timestamp=$(date +%s)
-      mv "$DATA_DIR" "${DATA_DIR}_final_${final_timestamp}"
-  fi

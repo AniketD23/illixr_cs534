@@ -219,3 +219,5 @@ profiles:
       enable_alignment: false
       enable_verbose_errors: false
       enable_pre_sleep: false
+      threshold: FPS
+      allocs_k: 10
