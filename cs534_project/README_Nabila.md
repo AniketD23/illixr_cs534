@@ -101,3 +101,7 @@ grep -n "stdlib" /shared/workspace/ntasnim/cs534/illixr_cs534/build/_deps/infini
 # To run the script - (make sure to change the experiments.txt for alloc or fps)
 # the script run x.yaml where x is mentioned in experiments.txt
 bash /shared/workspace/ntasnim/cs534/illixr_cs534/cs534_project/configs/run_experiments.sh
+
+
+# DARCO problem
+export CMAKE_PREFIX_PATH=/shared/workspace/ntasnim/cs534/illixr_cs534:$CMAKE_PREFIX_PATH
