@@ -22,7 +22,7 @@ ln -sf /software/gcc-11.2.0-rh8/lib64/libgomp.so \
 # Clean configure and build.
 
 ```bash
-cd ${ILLIXR_HOME}/cs534_project/build_files
+cd ${ILLIXR_HOME}/cs534_project/build
 
 rm -f CMakeCache.txt
 
