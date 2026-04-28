@@ -20,7 +20,7 @@ export LD_PRELOAD=~/lib-override/libomp.so
 export LD_LIBRARY_PATH=~/lib-override:${ILLIXR_HOME}/lib:${ILLIXR_HOME}/build:/software/cuda-11.6/lib64:/software/cuda-11.6/extras/CUPTI/lib64
 export OMP_NUM_THREADS=1
 export DISPLAY=:99
-export ILLIXR_LOG_LEVEL=warn
+export ILLIXR_LOG_LEVEL=info
 
 # Start Xvfb if not already running
 if ! pgrep -x Xvfb > /dev/null; then
