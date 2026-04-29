@@ -75,7 +75,7 @@ while IFS= read -r experiment; do
 
     # Rename log file from this run
     if [[ -f "$LOGS_DIR/illixr.log" ]]; then
-        mkdir -p "${BUILD_DIR}/cs534_output/${experiment}"
+        mkdir -p "${BUILD_DIR}/cs534_output/${experiment}/recorded_data"
         mv "$LOGS_DIR/illixr.log" "${BUILD_DIR}/cs534_output/${experiment}/"
         echo "Saved log: illixr_${experiment}.log"
     fi
@@ -84,8 +84,8 @@ while IFS= read -r experiment; do
     if [[ -d "$DATA_DIR" ]]; then
         cp "${yaml_file}" "${BUILD_DIR}/cs534_output/${experiment}"
         # rm -f "${DATA_DIR}_${experiment}"
-        mv -f "$DATA_DIR" "${BUILD_DIR}/cs534_output/${experiment}/recorded_data"
-        echo "Saved data directory: ${BUILD_DIR}/cs534_output/${experiment}"
+        cp -r ${DATA_DIR}/* "${BUILD_DIR}/cs534_output/${experiment}/recorded_data/"
+        echo "Saved data directory: ${BUILD_DIR}/cs534_output/${experiment}/recorded_data"
         mkdir -p "$DATA_DIR"
     fi
 
