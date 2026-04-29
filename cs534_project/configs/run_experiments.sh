@@ -84,8 +84,8 @@ while IFS= read -r experiment; do
     if [[ -d "$DATA_DIR" ]]; then
         cp "${yaml_file}" "${BUILD_DIR}/cs534_output/${experiment}"
         # rm -f "${DATA_DIR}_${experiment}"
-        mv -f "$DATA_DIR" "${BUILD_DIR}/cs534_output/${experiment}/"
-        echo "Saved data directory: "${BUILD_DIR}/cs534_output/${experiment}""
+        mv -f "$DATA_DIR" "${BUILD_DIR}/cs534_output/${experiment}/recorded_data"
+        echo "Saved data directory: ${BUILD_DIR}/cs534_output/${experiment}"
         mkdir -p "$DATA_DIR"
     fi
 
@@ -93,8 +93,8 @@ while IFS= read -r experiment; do
     newest_obj=$(ls -t *.obj | head -1)
     if [[ -n "$newest_obj" ]]; then
         echo "Output: $newest_obj ($(du -h "$newest_obj" | cut -f1))"
-        mv "$newest_obj" "${BUILD_DIR}/cs534_output/${experiment}/"
-        echo "Moved to: ${experiment}_output.obj"
+        mv "$newest_obj" "${BUILD_DIR}/cs534_output/${experiment}/${experiment}_output.obj"
+        echo "Moved to: ${BUILD_DIR}/cs534_output/${experiment}/${experiment}_output.obj"
     else
         echo "WARNING: No .obj output found for ${experiment}"
     fi
