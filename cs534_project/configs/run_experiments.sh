@@ -11,7 +11,6 @@ BUILD_DIR="${ILLIXR_HOME}/build"
 EXPERIMENTS_FILE="${CONFIG_DIR}/experiments.txt"
 LOGS_DIR="${BUILD_DIR}/logs"
 DATA_DIR="${BUILD_DIR}/recorded_data"
-
 # How long to wait after last frame before killing (seconds)
 POST_COMPLETION_WAIT=120
 
@@ -20,7 +19,7 @@ export LD_PRELOAD=~/lib-override/libomp.so
 export LD_LIBRARY_PATH=~/lib-override:${ILLIXR_HOME}/lib:${ILLIXR_HOME}/build:/software/cuda-11.6/lib64:/software/cuda-11.6/extras/CUPTI/lib64
 export OMP_NUM_THREADS=1
 export DISPLAY=:99
-export ILLIXR_LOG_LEVEL=info
+export ILLIXR_LOG_LEVEL=warn
 
 # Start Xvfb if not already running
 if ! pgrep -x Xvfb > /dev/null; then
@@ -76,16 +75,17 @@ while IFS= read -r experiment; do
 
     # Rename log file from this run
     if [[ -f "$LOGS_DIR/illixr.log" ]]; then
-        mv "$LOGS_DIR/illixr.log" "$LOGS_DIR/illixr_${experiment}.log"
+        mkdir -p "${BUILD_DIR}/cs534_output/${experiment}"
+        mv "$LOGS_DIR/illixr.log" "${BUILD_DIR}/cs534_output/${experiment}/"
         echo "Saved log: illixr_${experiment}.log"
     fi
 
     # Rename data directory from this run
     if [[ -d "$DATA_DIR" ]]; then
-        cp "${yaml_file}" "${DATA_DIR}"
-        rm -f "${DATA_DIR}_${experiment}"
-        mv "$DATA_DIR" "${DATA_DIR}_${experiment}"
-        echo "Saved data directory: recorded_data_${experiment}"
+        cp "${yaml_file}" "${BUILD_DIR}/cs534_output/${experiment}"
+        # rm -f "${DATA_DIR}_${experiment}"
+        mv -f "$DATA_DIR" "${BUILD_DIR}/cs534_output/${experiment}/"
+        echo "Saved data directory: "${BUILD_DIR}/cs534_output/${experiment}""
         mkdir -p "$DATA_DIR"
     fi
 
@@ -93,8 +93,8 @@ while IFS= read -r experiment; do
     newest_obj=$(ls -t *.obj | head -1)
     if [[ -n "$newest_obj" ]]; then
         echo "Output: $newest_obj ($(du -h "$newest_obj" | cut -f1))"
-        mv "$newest_obj" "${experiment}_output.obj"
-        echo "Renamed to: ${experiment}_output.obj"
+        mv "$newest_obj" "${BUILD_DIR}/cs534_output/${experiment}/"
+        echo "Moved to: ${experiment}_output.obj"
     else
         echo "WARNING: No .obj output found for ${experiment}"
     fi
