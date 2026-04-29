@@ -93,7 +93,7 @@ while IFS= read -r experiment; do
     newest_obj=$(ls -t *.obj | head -1)
     if [[ -n "$newest_obj" ]]; then
         echo "Output: $newest_obj ($(du -h "$newest_obj" | cut -f1))"
-        mv "$newest_obj" "${BUILD_DIR}/cs534_output/${experiment}/${experiment}_output.obj"
+        mv -f "$newest_obj" "${BUILD_DIR}/cs534_output/${experiment}/${experiment}_output.obj"
         echo "Moved to: ${BUILD_DIR}/cs534_output/${experiment}/${experiment}_output.obj"
     else
         echo "WARNING: No .obj output found for ${experiment}"
