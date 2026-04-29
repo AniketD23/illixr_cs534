@@ -33,6 +33,8 @@ bash ${ILLIXR_HOME}/cs534_project/build_files/build_config_script.sh
 cd ${ILLIXR_HOME}/build
 
 cmake --build . -j4 2>&1 | tee build.log
+
+gmake 2>&1 | tee build.log
 ```
 
 # Install.
